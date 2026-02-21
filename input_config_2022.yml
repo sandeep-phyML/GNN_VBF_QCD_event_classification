@@ -15,23 +15,24 @@ weight_features:
   - LUMI
 
 train_mclass_files_labels:
+  tree_name : tree
   folder_path : /eos/home-s/sapradha/PhD_Projects/VBF_analysis/CMSSW_14_0_9/src/VBFHBB/Analysis/test/FINAL_ANALYSIS/DNN_Ntuples_Train/Run_3_DNN/
   file_names_labels:
     - file_name: JetMET_2022preEE_2022EE_5perc.root
       label: 0
-      branch_name: DNN_QCD
+      process_name : QCD
     - file_name: VBFHto2B_M-125_dipoleRecoilOn_TuneCP5_13p6TeV_powheg-pythia8_2022preEE_2022EE.root
       label: 1
-      branch_name: DNN_VBF
+      process_name : DNN_VBF
     - file_name: GluGluHto2B_M-125_TuneCP5_13p6TeV_powheg-minlo-pythia8_2022preEE_2022EE.root
       label: 2
-      branch_name: DNN_GGH
+      process_name : DNN_GGH
     - file_name: TTto4Q_TuneCP5_13p6TeV_powheg-pythia8_2022preEE_2022EE.root
       label: 3
-      branch_name: DNN_TT
+      process_name : DNN_TT
     - file_name: Zto2Q-4Jets_HT-200toinf_TuneCP5_13p6TeV_madgraphMLM-pythia8_2022preEE_2022EE.root
       label: 4
-      branch_name: DNN_Z2Q
+      process_name : DNN_Z2Q
 
 
 
@@ -51,3 +52,71 @@ output_plot_models:
 
 
 
+node_features:
+  -
+    - T_pt0
+    - T_eta0
+    - T_phi0
+    - T_en0
+    - T_btag0
+    - T_qgl0
+
+  -
+    - T_pt1
+    - T_eta1
+    - T_phi1
+    - T_en1
+    - T_btag1
+    - T_qgl1
+
+  -
+    - T_pt2
+    - T_eta2
+    - T_phi2
+    - T_en2
+    - T_btag2
+    - T_qgl2
+
+  -
+    - T_pt3
+    - T_eta3
+    - T_phi3
+    - T_en3
+    - T_btag3
+    - T_qgl3
+
+  -
+    - T_pt4
+    - T_eta4
+    - T_phi4
+    - T_en4
+    - T_btag4
+    - T_qgl4
+
+  -
+    - T_pt5
+    - T_eta5
+    - T_phi5
+    - T_en5
+    - T_btag5
+    - T_qgl5
+
+  -
+    - T_pt6
+    - T_eta6
+    - T_phi6
+    - T_en6
+    - T_btag6
+    - T_qgl6
+
+  -
+    - T_pt7
+    - T_eta7
+    - T_phi7
+    - T_en7
+    - T_btag7
+    - T_qgl7
+
+extra_features:
+  - T_reg_mbb
+  - T_event
