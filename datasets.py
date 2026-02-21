@@ -38,16 +38,16 @@ def load_data(config , out_config_path):
     branches_to_load = config["weight_features"] + config["extra_features"]
     for node_feature in config["node_features"]:
         branches_to_load += node_feature
-    for file_name , label , process_name in file_path_config["file_names_labels"]:
-        file_path = os.path.join(file_path_config["folder_path"], file_name)
+    for process_config in file_path_config["file_names_labels"]:
+        file_path = os.path.join(file_path_config["folder_path"], process_config["file_name"])
         with uproot.open(file_path) as file:
             tree = file[file_path_config["tree_name"]]
             data = tree.arrays(branches_to_load , library="pd")
-            data["label"] = np.full(len(data), label)
-        out_config[process_name] = {"sample size" : len(data) , "label" : label }
+            data["label"] = np.full(len(data), process_config["label"])
+        out_config[process_config["process_name"]] = {"sample size" : len(data) , "label" : process_config["label"] }
     data = pd.concat(data_frames, ignore_index=True)
     out_config["full-data"] = {"sample size" : len(data) , "nlabel" : np.unique(data["label"]).tolist() }
-    update_out_config({"process_name": {"sample size" : len(data) , "label" : label }} , out_config_path)
+    update_out_config({"process_name": {"sample size" : len(data) , "label" : process_config["label"] }} , out_config_path)
     return data
 
 
