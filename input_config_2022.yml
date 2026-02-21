@@ -1,0 +1,53 @@
+learning_rate : 0.001
+batch_size : 512
+num_epochs : 200
+val_fraction : 0.3
+nsamples : 700000
+act_output_layer_mclass : softmax
+loss_function_mclass : SparseCategoricalCrossentropy
+
+weight_features:
+  - T_weight
+  - T_HLTweight
+  - T_PUweight
+  - T_btag_weight_central
+  - T_online_btag_weight
+  - LUMI
+
+train_mclass_files_labels:
+  folder_path : /eos/home-s/sapradha/PhD_Projects/VBF_analysis/CMSSW_14_0_9/src/VBFHBB/Analysis/test/FINAL_ANALYSIS/DNN_Ntuples_Train/Run_3_DNN/
+  file_names_labels:
+    - file_name: JetMET_2022preEE_2022EE_5perc.root
+      label: 0
+      branch_name: DNN_QCD
+    - file_name: VBFHto2B_M-125_dipoleRecoilOn_TuneCP5_13p6TeV_powheg-pythia8_2022preEE_2022EE.root
+      label: 1
+      branch_name: DNN_VBF
+    - file_name: GluGluHto2B_M-125_TuneCP5_13p6TeV_powheg-minlo-pythia8_2022preEE_2022EE.root
+      label: 2
+      branch_name: DNN_GGH
+    - file_name: TTto4Q_TuneCP5_13p6TeV_powheg-pythia8_2022preEE_2022EE.root
+      label: 3
+      branch_name: DNN_TT
+    - file_name: Zto2Q-4Jets_HT-200toinf_TuneCP5_13p6TeV_madgraphMLM-pythia8_2022preEE_2022EE.root
+      label: 4
+      branch_name: DNN_Z2Q
+
+
+
+
+
+  
+output_plot_models:
+  folder_path : /afs/cern.ch/user/s/sapradha/VBF_Analysis_Git/sandeep-phyML-VBF_Analysis_Run-3/NeuralNetwork/DNN/results/
+  mclass_dnn_file_names:
+    roc_plot : roc_mclass_dnn.png
+    mbb_distr_with_and_without_cut : mbb_distr_with_and_without_cut_mclass_dnn.png
+    dnn_score_distr : dnn_score_distr_mclass_dnn.png
+    odd_model : odd_mclass_dnn.keras
+    even_model : even_mclass_dnn.keras
+    save_loss_path_odd : loss_acc_train_val_mclass_dnn_even.png
+    save_loss_path_even : loss_acc_train_val_mclass_dnn_odd.png
+
+
+
