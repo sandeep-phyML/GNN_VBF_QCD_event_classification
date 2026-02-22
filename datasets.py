@@ -49,8 +49,52 @@ def load_data(config , out_config_path):
         out_config[process_config["process_name"]] = {"sample size" : len(data) , "label" : process_config["label"] }
         data_frames.append(data)
     data = pd.concat(data_frames, ignore_index=True)
-    out_config["full-data"] = {"sample size" : len(data) , "nlabel" : np.unique(data["label"]).tolist() }
-    update_out_config({"process_name": {"sample size" : len(data) , "label" : process_config["label"] }} , out_config_path)
+    nan_count = data.isna().sum().sum()
+    inf_count = np.isinf(data.to_numpy()).sum()
+    data.replace([np.inf, -np.inf], 0).fillna(0)
+    out_config["full-data"] = {"sample size" : len(data) , "nlabel" : np.unique(data["label"]).tolist() , "nan count" : int(nan_count) , "inf count" : int(inf_count)}
+    update_out_config(out_config , out_config_path)
     return data
 
 
+def create_graph_data(pd_data):
+    # create a list of graphs from the test data
+    graphs = []
+    edges = []
+    data = None
+    for index, row in pd_data.iterrows():
+        graph = []
+        for group in config["node_features"]:
+            graph.append(row[group].to_list())
+        adjacency_matrix = np.zeros((len(graph), len(graph)))
+        marks_array = np.array([row[f"mask_{i}"] for i in range(len(graph))])
+        for i in range(len(graph)):
+            adjacency_matrix[i] = marks_array
+        graph = np.array(graph)
+        
+        x = torch.FloatTensor(graph).view(-1, 6)  # Shape: (n_nodes, 6)
+        edge_index = torch.nonzero(torch.FloatTensor(adjacency_matrix)).t()  # Shape: (2, num_edges)
+        data = Data(x=x, edge_index=edge_index , weight = row['sample_weight'], label = row['label'])
+        if index == 0:
+            print(f"Graph shape: {graph.shape}, Adjacency Matrix shape: {adjacency_matrix.shape}")
+            print(f"x : shape {x.shape} , edge_index : shape {edge_index.shape}")
+            print(marks_array)
+            print(graphs)
+            print(f"Adjacency Matrix: {adjacency_matrix}")
+        graphs.append(data)
+    return graphs
+        
+
+def prepare_graph_data(data, config):
+    node_groups = config["node_features"]
+    graphs = []
+    masks = []
+    for group in node_groups:
+        features = data[group].to_numpy(dtype=np.float32)
+        graphs.append(features)
+        masks.append((data[group[0]] > 0.0).astype(int).to_numpy())
+    # Shape: (n_events, n_nodes, n_features)
+    graph_array = np.stack(graphs, axis=1)
+    # Shape: (n_events, n_nodes)
+    mask_array = np.stack(masks, axis=1)
+    return graph_array, mask_array
