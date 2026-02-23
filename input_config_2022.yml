@@ -26,36 +26,6 @@ train_mclass_files_labels:
         - T_btag_weight_central
         - T_online_btag_weight
         - LUMI
-    - file_name: GluGluHto2B_M-125_TuneCP5_13p6TeV_powheg-minlo-pythia8_2022preEE_2022EE.root
-      label: 2
-      process_name : DNN_GGH
-      weight_features:
-        - T_weight
-        - T_HLTweight
-        - T_PUweight
-        - T_btag_weight_central
-        - T_online_btag_weight
-        - LUMI
-    - file_name: TTto4Q_TuneCP5_13p6TeV_powheg-pythia8_2022preEE_2022EE.root
-      label: 3
-      process_name : DNN_TT
-      weight_features:
-        - T_weight
-        - T_HLTweight
-        - T_PUweight
-        - T_btag_weight_central
-        - T_online_btag_weight
-        - LUMI
-    - file_name: Zto2Q-4Jets_HT-200toinf_TuneCP5_13p6TeV_madgraphMLM-pythia8_2022preEE_2022EE.root
-      label: 4
-      process_name : DNN_Z2Q
-      weight_features:
-        - T_weight
-        - T_HLTweight
-        - T_PUweight
-        - T_btag_weight_central
-        - T_online_btag_weight
-        - LUMI
 
 
 

@@ -4,7 +4,7 @@ import pandas as pd
 import torch
 import yaml
 import os 
-
+from torch_geometric.data import Data
 def read_config(config_path):
     with open(config_path, 'r') as f:
         config = yaml.safe_load(f)
@@ -31,7 +31,7 @@ def update_out_config(config, out_config_path):
     with open(out_config_path, 'w') as f:
         yaml.dump(out_config, f)
 
-def load_data(config , out_config_path):
+def load_data(config , out_config_path , nsample = None):
     data_frames = []
     out_config = {}
     file_path_config = config["train_mclass_files_labels"]
@@ -52,12 +52,18 @@ def load_data(config , out_config_path):
     nan_count = data.isna().sum().sum()
     inf_count = np.isinf(data.to_numpy()).sum()
     data.replace([np.inf, -np.inf], 0).fillna(0)
+    for graph_index in range(len(config["node_features"])):
+        data[f"mask_{graph_index}"] = data[config["node_features"][graph_index][0]] >= 0.0
     out_config["full-data"] = {"sample size" : len(data) , "nlabel" : np.unique(data["label"]).tolist() , "nan count" : int(nan_count) , "inf count" : int(inf_count)}
     update_out_config(out_config , out_config_path)
+    if nsample :
+        nevents = min(nsample, len(data))
+        data = data.sample(n=nevents, random_state=42)
+    
     return data
 
 
-def create_graph_data(pd_data):
+def create_graph_data(pd_data , config):
     # create a list of graphs from the test data
     graphs = []
     edges = []
@@ -74,7 +80,7 @@ def create_graph_data(pd_data):
         
         x = torch.FloatTensor(graph).view(-1, 6)  # Shape: (n_nodes, 6)
         edge_index = torch.nonzero(torch.FloatTensor(adjacency_matrix)).t()  # Shape: (2, num_edges)
-        data = Data(x=x, edge_index=edge_index , weight = row['sample_weight'], label = row['label'])
+        data = Data(x=x, edge_index=edge_index , weight=torch.tensor([row['sample_weight']], dtype=torch.float) , y=torch.tensor([row['label']], dtype=torch.float))
         if index == 0:
             print(f"Graph shape: {graph.shape}, Adjacency Matrix shape: {adjacency_matrix.shape}")
             print(f"x : shape {x.shape} , edge_index : shape {edge_index.shape}")
@@ -83,18 +89,3 @@ def create_graph_data(pd_data):
             print(f"Adjacency Matrix: {adjacency_matrix}")
         graphs.append(data)
     return graphs
-        
-
-def prepare_graph_data(data, config):
-    node_groups = config["node_features"]
-    graphs = []
-    masks = []
-    for group in node_groups:
-        features = data[group].to_numpy(dtype=np.float32)
-        graphs.append(features)
-        masks.append((data[group[0]] > 0.0).astype(int).to_numpy())
-    # Shape: (n_events, n_nodes, n_features)
-    graph_array = np.stack(graphs, axis=1)
-    # Shape: (n_events, n_nodes)
-    mask_array = np.stack(masks, axis=1)
-    return graph_array, mask_array
