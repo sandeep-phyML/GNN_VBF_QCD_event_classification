@@ -17,7 +17,7 @@ import numpy as np
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 config = read_config("/afs/cern.ch/user/s/sapradha/VBF_Analysis_Git/GNN_VBF_QCD_event_classification/input_config_2022.yml")
 os.remove("/afs/cern.ch/user/s/sapradha/VBF_Analysis_Git/GNN_VBF_QCD_event_classification/output_config_2022.yml")
-pd_loaded_data = load_data(config , "/afs/cern.ch/user/s/sapradha/VBF_Analysis_Git/GNN_VBF_QCD_event_classification/output_config_2022.yml" , nsample = 200000 ,save_csv = True )
+pd_loaded_data = load_data(config , "/afs/cern.ch/user/s/sapradha/VBF_Analysis_Git/GNN_VBF_QCD_event_classification/output_config_2022.yml" , nsample = 2000 ,save_csv = True )
 
 #sys.exit()
 train_df, temp_df = train_test_split(
@@ -57,6 +57,7 @@ def train():
     for data in train_loader:
         optimizer.zero_grad()
         out = model(data.to(device))
+        criterion = nn.BCELoss(weight = data.weight.view(-1,1))
         loss = criterion(out, data.y.view(-1, 1))
         loss.backward()
         optimizer.step()
@@ -92,7 +93,7 @@ for epoch in range(10):
 
     if val_acc > best_acc:
         best_acc = val_acc
-        torch.save(model.state_dict(), 'best_model.pt')
+        torch.save(model.state_dict(), '/afs/cern.ch/user/s/sapradha/VBF_Analysis_Git/GNN_VBF_QCD_event_classification/results/best_model.pt')
 
 
     # Append to history
@@ -101,10 +102,9 @@ for epoch in range(10):
     history['accuracy'].append(train_acc)
     history['val_accuracy'].append(val_acc)
 
-plot_training_history(history)
-# Load best model
+# Load bcriterionest model
 model.load_state_dict(torch.load('/afs/cern.ch/user/s/sapradha/VBF_Analysis_Git/GNN_VBF_QCD_event_classification/results/best_model.pt'))
-
+plot_training_history(history)
 # Evaluate on test set
 model.eval()
 y_true = []
