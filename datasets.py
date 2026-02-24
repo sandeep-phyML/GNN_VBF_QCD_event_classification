@@ -78,7 +78,8 @@ def create_graph_data(pd_data , config):
         adjacency_matrix = np.zeros((len(graph), len(graph)))
         marks_array = np.array([row[f"mask_{i}"] for i in range(len(graph))])
         for i in range(len(graph)):
-            adjacency_matrix[i] = marks_array
+            if marks_array[i] != 0:
+                adjacency_matrix[i] = marks_array
         graph = np.array(graph)
         
         x = torch.FloatTensor(graph).view(-1, 6)  # Shape: (n_nodes, 6)

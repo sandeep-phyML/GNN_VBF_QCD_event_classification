@@ -15,10 +15,11 @@ from jet_plotting_utils import plot_confusion_matrix, plot_training_history, plo
 import numpy as np
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-config = read_config("input_config_2022.yml")
-pd_loaded_data = load_data(config , "output_config_2022.yml" , nsample = 200000 ,save_csv = True )
+config = read_config("/afs/cern.ch/user/s/sapradha/VBF_Analysis_Git/GNN_VBF_QCD_event_classification/input_config_2022.yml")
+os.remove("/afs/cern.ch/user/s/sapradha/VBF_Analysis_Git/GNN_VBF_QCD_event_classification/output_config_2022.yml")
+pd_loaded_data = load_data(config , "/afs/cern.ch/user/s/sapradha/VBF_Analysis_Git/GNN_VBF_QCD_event_classification/output_config_2022.yml" , nsample = 200000 ,save_csv = True )
 
-sys.exit()
+#sys.exit()
 train_df, temp_df = train_test_split(
     pd_loaded_data ,
     test_size=0.4,
@@ -102,7 +103,7 @@ for epoch in range(10):
 
 plot_training_history(history)
 # Load best model
-model.load_state_dict(torch.load('best_model.pt'))
+model.load_state_dict(torch.load('/afs/cern.ch/user/s/sapradha/VBF_Analysis_Git/GNN_VBF_QCD_event_classification/results/best_model.pt'))
 
 # Evaluate on test set
 model.eval()
