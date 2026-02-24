@@ -31,7 +31,7 @@ def update_out_config(config, out_config_path):
     with open(out_config_path, 'w') as f:
         yaml.dump(out_config, f)
 
-def load_data(config , out_config_path , nsample = None):
+def load_data(config , out_config_path , nsample = None , save_csv = False):
     data_frames = []
     out_config = {}
     file_path_config = config["train_mclass_files_labels"]
@@ -47,19 +47,22 @@ def load_data(config , out_config_path , nsample = None):
             data["sample_weight"] = np.prod(data[process_config["weight_features"]], axis=1)
             data = data.drop(columns=process_config["weight_features"])
         out_config[process_config["process_name"]] = {"sample size" : len(data) , "label" : process_config["label"] }
+        if nsample :
+            replace = nsample > len(data)
+            data = data.sample(n=nsample, replace=replace, random_state=42)
         data_frames.append(data)
     data = pd.concat(data_frames, ignore_index=True)
     nan_count = data.isna().sum().sum()
     inf_count = np.isinf(data.to_numpy()).sum()
     data.replace([np.inf, -np.inf], 0).fillna(0)
     for graph_index in range(len(config["node_features"])):
+        labels, counts = np.unique(data["label"], return_counts=True)
         data[f"mask_{graph_index}"] = data[config["node_features"][graph_index][0]] >= 0.0
-    out_config["full-data"] = {"sample size" : len(data) , "nlabel" : np.unique(data["label"]).tolist() , "nan count" : int(nan_count) , "inf count" : int(inf_count)}
+    out_config["full-data"] = {"sample size" : len(data) , "nlabel_counts" : dict(zip(labels.astype(float), counts.astype(float))) , "nan count" : int(nan_count) , "inf count" : int(inf_count)}
     update_out_config(out_config , out_config_path)
-    if nsample :
-        nevents = min(nsample, len(data))
-        data = data.sample(n=nevents, random_state=42)
-    
+    if save_csv :
+        replace = 10000 > len(data)
+        data.sample(n=10000, replace = replace ,random_state=42).to_csv("test_sample_gnn.csv", index=False)
     return data
 
 

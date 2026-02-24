@@ -1,3 +1,6 @@
+import sys
+import os
+sys.path.append("/afs/cern.ch/user/s/sapradha/VBF_Analysis_Git/GNN_VBF_QCD_event_classification")
 from datasets import create_graph_data , load_data , read_config
 import yaml
 import pandas as pd
@@ -13,8 +16,9 @@ import numpy as np
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 config = read_config("input_config_2022.yml")
-pd_loaded_data = load_data(config , "output_config_2022.yml" , nsample = 500)
+pd_loaded_data = load_data(config , "output_config_2022.yml" , nsample = 200000 ,save_csv = True )
 
+sys.exit()
 train_df, temp_df = train_test_split(
     pd_loaded_data ,
     test_size=0.4,
@@ -96,7 +100,7 @@ for epoch in range(10):
     history['accuracy'].append(train_acc)
     history['val_accuracy'].append(val_acc)
 
-
+plot_training_history(history)
 # Load best model
 model.load_state_dict(torch.load('best_model.pt'))
 

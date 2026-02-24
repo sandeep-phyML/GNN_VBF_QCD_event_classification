@@ -73,7 +73,8 @@ def plot_training_history(history, metrics=['loss', 'accuracy']):
         ax.grid(True)
     
     plt.tight_layout()
-    plt.savefig("training_history.png")
+    plt.savefig("/eos/home-s/sapradha/www/GNN/training_history.png")
+    plt.savefig("/eos/home-s/sapradha/www/GNN/training_history.pdf")
     #plt.show()
 
 def plot_confusion_matrix(y_true, y_pred, labels=['QCD', 'TT']):
@@ -87,7 +88,8 @@ def plot_confusion_matrix(y_true, y_pred, labels=['QCD', 'TT']):
     plt.xlabel('Predicted')
     plt.ylabel('True')
     plt.title('Confusion Matrix')
-    plt.savefig("confusion_matrix.png")
+    plt.savefig("/eos/home-s/sapradha/www/GNN/confusion_matrix.png")
+    plt.savefig("/eos/home-s/sapradha/www/GNN/confusion_matrix.pdf")
     #plt.show() 
 
 # plot roc curve
@@ -100,5 +102,6 @@ def plot_roc_curve(y_true, y_pred_proba):
     plt.ylabel('True Positive Rate')
     plt.title('ROC Curve')
     plt.legend(loc='lower right')
-    plt.savefig("roc.png")
+    plt.savefig("/eos/home-s/sapradha/www/GNN/roc.png")
+    plt.savefig("/eos/home-s/sapradha/www/GNN/roc.pdf")
     #plt.show()
